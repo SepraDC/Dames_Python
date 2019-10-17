@@ -1,5 +1,3 @@
-
-
 class Pion():
 
     def __init__(self, x, y, joueur) :

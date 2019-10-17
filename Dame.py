@@ -68,6 +68,7 @@ class Dame:
 # Création du widget principal ("maître") :
 fen1 = Tk()
 fen1.resizable(0, 0)
+fen1.title("Checkers")
 
 # Création des widgets "esclaves" :
 can1 = Canvas(fen1,bg='dark grey',height=740,width=740)
