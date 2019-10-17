@@ -7,7 +7,7 @@ class Pion():
         self.couleur = joueur.couleur
 
     def deplacer(self, event, damier) :
-        deplacementXY = [event.x - x, event.y - y]
+        deplacementXY = [event.x - self.x, event.y - self.y]
 
         # On vérifie si le déplacement est diagonale
         if abs(deplacementXY[0]) != abs(deplacementXY[1]) : return False 
@@ -42,5 +42,5 @@ class Pion():
         pion.joueur.perdreJoueur(pion)
 
     def __eq__(self, other) :
-        if self.x == ohter.x and self.y == other.y and self.couleur == other.couleur and self.joueur = other.joueur :
+        if self.x == other.x and self.y == other.y and self.couleur == other.couleur and self.joueur == other.joueur :
             return True

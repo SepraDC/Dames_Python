@@ -55,12 +55,15 @@ w = 740
 
 fenMenu = Tk()
 fenMenu.title("Checkers")
-fenMenu.resizable(0, 0)
+fenMenu.resizable(0, 0) # Désactive le changement de taille de la fenêtre
+
+#region Window position
 ws = fenMenu.winfo_screenwidth() # width of the screen
 hs = fenMenu.winfo_screenheight() # height of the screen
 x = (ws/2) - (w/2)
 y = (hs/2) - (h/2)
 fenMenu.geometry('%dx%d+%d+%d' % (w, h, x, y))
+#endregion
 
 can = Canvas(fenMenu, bg='dark grey', width=w, height=h)
 can.pack(side=LEFT)
