@@ -1,6 +1,6 @@
 from tkinter import *
 
-class Menu:
+class Menu():
     def __init__(self, canevas, width, height, img):
         self.can = canevas
         self.width = width

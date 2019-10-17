@@ -7,30 +7,35 @@ class Pion():
         self.y = y
         self.joueur = joueur
         self.couleur = joueur.couleur
+        print(self.DISTANCE_MAX)
 
     def deplacer(self, event, damier) :
-        deplacementXY = [event.x - self.x, event.y - self.y]
+        deplacement_x = event.x - self.x
+        deplacement_y = event.y - self.y
+
+        # On vérifie si le pion sort du plateau
+        if (self.x + deplacement_x or self.y + deplacement_y) > len(damier[0]) : return False
 
         # On vérifie si le déplacement est diagonale
-        if abs(deplacementXY[0]) != abs(deplacementXY[1]) : return False 
+        if abs(deplacement_x) != abs(deplacement_y) : return False 
 
-        # On vérifie si le déplacement est trop grand 
-        if abs(deplacementXY[0]) > Pion.DISTANCE_MAX or abs(deplacementXY[1]) > Pion.DISTANCE_MAX : return False
+        # On vérifie si le déplacement est trop grand
+        if not isinstance(self, Dame) and abs(deplacement_x) > self.DISTANCE_MAX or abs(deplacement_y) > self.DISTANCE_MAX : return False
 
         # On vérifie si le joueur peux aller dans ce sens
-        if self.joueur.id == 1 and deplacementXY[1] < 0 : return False
-        elif self.joueur.id == 2 and deplacementXY[1] > 0 : return False
+        if self.joueur.id == 1 and deplacement_y < 0 : return False
+        elif self.joueur.id == 2 and deplacement_y > 0 : return False
 
         # On vérifie si aucun pion ne bloque la route
-        if abs(deplacementXY[1]) == 1 and damier[self.x + deplacementXY[0], self.y + deplacementXY[1]] == "" :
-            self.x += deplacementXY[0]
-            self.y += deplacementXY[1]
+        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "" :
+            self.x += deplacement_x
+            self.y += deplacement_y
             return True
         # On vérifie si on passe par dessus un pion, si oui on le mange
-        elif abs(deplacementXY[1]) == Pion.DISTANCE_MAX and damier[self.x + deplacementXY[0] - 1, self.y + deplacementXY[1] - 1]  != "" :
-            self.manger(damier[self.x + deplacementXY[0] - 1, self.y + deplacementXY[1] - 1])
-            self.x += deplacementXY[0]
-            self.y += deplacementXY[1]
+        elif abs(deplacement_y) == self.DISTANCE_MAX and damier[self.x + deplacement_x - 1, self.y + deplacement_y - 1]  != "" :
+            self.manger(damier[self.x + deplacement_x - 1, self.y + deplacement_y - 1])
+            self.x += deplacement_x
+            self.y += deplacement_y
             return True
         else : return False
 
@@ -45,12 +50,10 @@ class Pion():
 
 class Dame(Pion) :
 
+    DISTANCE_MAX = 9
+
     def __init__(self, x, y, joueur) :
         Pion.__init__(self, x, y, joueur)
-
-    def deplacer(self, event, damier) :
-        return "PUUUUTE"
+        print(self.DISTANCE_MAX)
 
         
-
-    
