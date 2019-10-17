@@ -1,4 +1,4 @@
-class Pion:
+class Pion():
 
     DISTANCE_MAX = 2
 
@@ -27,7 +27,7 @@ class Pion:
         elif self.joueur.id == 2 and deplacement_y > 0 : return False
 
         # On vérifie si aucun pion ne bloque la route
-        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "" :
+        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "":
             self.x += deplacement_x
             self.y += deplacement_y
             return True
