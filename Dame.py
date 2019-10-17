@@ -67,10 +67,12 @@ class Dame:
 
 # Création du widget principal ("maître") :
 fen1 = Tk()
+fen1.resizable(0, 0)
 
 # Création des widgets "esclaves" :
-can1 = Canvas(fen1,bg='dark grey',height=620,width=620)
+can1 = Canvas(fen1,bg='dark grey',height=740,width=740)
 can1.pack(side=LEFT)
+
 
 #Creation des dames
 d = Dame(can1)
