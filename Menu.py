@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import PhotoImage
 
 class Menu:
     def __init__(self, canevas, width, height, img):
