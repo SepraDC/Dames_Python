@@ -3,6 +3,7 @@ class Pion:
     DISTANCE_MAX = 2
 
     def __init__(self, x, y, joueur) :
+        #self.id = id
         self.x = x
         self.y = y
         self.joueur = joueur
@@ -27,7 +28,7 @@ class Pion:
         elif self.joueur.id == 2 and deplacement_y > 0 : return False
 
         # On vérifie si aucun pion ne bloque la route
-        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "" :
+        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "":
             self.x += deplacement_x
             self.y += deplacement_y
             return True
@@ -52,6 +53,6 @@ class Dame(Pion) :
 
     DISTANCE_MAX = 9
 
-    def __init__(self, x, y, joueur) :
-        Pion.__init__(self, x, y, joueur)
+    def __init__(self, id, x, y, joueur) :
+        Pion.__init__(self,id, x, y, joueur)
         print(self.DISTANCE_MAX)
