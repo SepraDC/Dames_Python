@@ -12,15 +12,12 @@ class Dame:
             self.jeu.append(['','','','','','','','','',''])
 
     def damier(self):
-        for i in range(10):
-            for l in range(10):
-                self.can.create_rectangle(self.caseX, self.caseY, self.caseX + self.caseSide, self.caseY + self.caseSide, fill=self.caseColor)
-                self._changerDamier()
-                self.caseX += self.caseSide
-            self._changerDamier()
-            self.caseY += self.caseSide
-            self.caseX = 10
-        self._installationPions()
+        for largeur in range(self.caseX):
+            decalage_couleur = 0 if largeur % 2 == 0 else 1
+            for longueur in range(10) :
+                color = "white" if longueur % 2 == decalage_couleur else "black"
+                position = (60 * 10 / self.caseX)
+                self.can.create_rectangle( position * longueur, position * largeur, (position * longueur) + 60, (position * largeur) + 60, fill=color)
 
     def _installationPions(self):
         #installation des pions du joueur 1
@@ -48,10 +45,6 @@ class Dame:
                     if l % 2 == 0:
                         self.jeu[i][l] = 'J2'
                         self.can.create_oval(x + 5, y + 5, x + self.caseSide - 5, y + self.caseSide - 5, fill='blue')
-
-    def _changerDamier(self):
-        if self.caseColor == 'white': self.caseColor = 'black'
-        else: self.caseColor = 'white'
 
     def clear(self):
         "Nettoyage du canevas +réinitialisation des variables"
