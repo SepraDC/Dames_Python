@@ -1,4 +1,4 @@
-class Pion():
+class Pion:
 
     DISTANCE_MAX = 2
 
@@ -55,5 +55,3 @@ class Dame(Pion) :
     def __init__(self, x, y, joueur) :
         Pion.__init__(self, x, y, joueur)
         print(self.DISTANCE_MAX)
-
-        
