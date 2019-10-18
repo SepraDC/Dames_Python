@@ -22,7 +22,7 @@ class Pion:
         if abs(deplacement_x) != abs(deplacement_y) : return False
 
         # On vérifie si le pion est sur la même case
-        if deplacement_x == self.x: return False
+        if x == self.x: return False
 
         # On vérifie si le déplacement est trop grand
         if not isinstance(self, Dame) and abs(deplacement_x) > self.DISTANCE_MAX or abs(deplacement_y) > self.DISTANCE_MAX : return False
@@ -32,7 +32,7 @@ class Pion:
         elif self.joueur.id == 2 and deplacement_y < 0 : return False
 
         # On vérifie si la case sélectionnée est vide
-        if damier[self.x + deplacement_x][self.y + deplacement_y] != '' : return False
+        if isinstance(damier[self.x + deplacement_x][self.y + deplacement_y], Pion) : return False
 
         # On bouge le pion
         if abs(deplacement_y) == 1 :
