@@ -1,4 +1,4 @@
-class Pion():
+class Pion:
 
     DISTANCE_MAX = 2
 
