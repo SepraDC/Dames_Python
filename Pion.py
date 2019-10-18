@@ -13,6 +13,8 @@ class Pion():
         deplacement_x = x - self.x
         deplacement_y = y - self.y
 
+        # Il faut vérifier sur quel diagonale regardez pour le pion a manger
+
         # On vérifie si le pion sort du plateau
         if (self.x + deplacement_x or self.y + deplacement_y) > len(damier[0]) : return False
 
@@ -26,13 +28,16 @@ class Pion():
         if self.joueur.id == 1 and deplacement_y < 0 : return False
         elif self.joueur.id == 2 and deplacement_y > 0 : return False
 
-        # On vérifie si aucun pion ne bloque la route
-        if abs(deplacement_y) == 1 and damier[self.x + deplacement_x, self.y + deplacement_y] == "":
+        # On vérifie si la case sélectionnée est vide
+        if damier[self.x + deplacement_x, self.y + deplacement_y] != "" : return False
+
+        # On bouge le pion
+        if abs(deplacement_y) == 1 :
             self.x += deplacement_x
             self.y += deplacement_y
             return True
         # On vérifie si on passe par dessus un pion, si oui on le mange
-        elif abs(deplacement_y) == self.DISTANCE_MAX and damier[self.x + deplacement_x - 1, self.y + deplacement_y - 1]  != "" and damier[self.x + deplacement_x, self.y + deplacement_y] == "":
+        elif abs(deplacement_y) == self.DISTANCE_MAX and damier[self.x + deplacement_x - 1, self.y + deplacement_y - 1]  != "" :
             self.manger(damier[self.x + deplacement_x - 1, self.y + deplacement_y - 1])
             self.x += deplacement_x
             self.y += deplacement_y
