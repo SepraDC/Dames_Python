@@ -50,13 +50,14 @@ class Jeu:
                         if l % 2 != 0:
                             pion = Pion(idPions, l, i, joueur)
                             joueur.pions.append(pion)
-                            self.jeu[i][l] = pion
+                            self.jeu[l][i] = pion
+                            idPions += 1
                     else:
                         if l % 2 == 0:
                             pion = Pion(idPions, l, i, joueur)
                             joueur.pions.append(pion)
-                            self.jeu[i][l] = pion
-                    idPions += 1
+                            self.jeu[l][i] = pion
+                            idPions += 1
 
     def dessinerPions(self, joueur):
         for pion in joueur.pions:
@@ -75,18 +76,14 @@ class Jeu:
     def catch_object(self, event):
         "clic gauche sur l'objet à déplacer"
         self.x1, self.y1 = event.x, event.y
-        x1 = int(self.x1 / self.caseSide)
-        y1 = int(self.y1 / self.caseSide) - 1
-
-        # if isinstance(self.jeu[x1][y1], Pion) :
-        #     self.pionEnCours = self.jeu[x1][y1]
-        #     print(str(self.pionEnCours.id))
-        print(self.jeu[x1][y1].id)
-        print(x1)
-        print(y1)
         self.select_object = self.can.find_closest(self.x1, self.y1)
         print(self.select_object)
         if self.select_object[0] > 102 and self.select_object[0] < 143:
+            self.xInitial = int(self.x1 / self.caseSide)
+            self.yInitial = int(self.y1 / self.caseSide) - 1
+
+            if isinstance(self.jeu[self.xInitial][self.yInitial], Pion):
+                self.pionEnCours = self.jeu[self.xInitial][self.yInitial]
             self.can.lift(self.select_object)
 
     def move_object(self, event):
@@ -96,24 +93,23 @@ class Jeu:
         dx, dy = x2 - self.x1, y2 - self.y1
         if self.select_object[0] > 102 and self.select_object[0] < 143:
             self.can.move(self.select_object, dx, dy)
-            self.x1, self.y1 = x2, y1
+            self.x1, self.y1 = x2, y2
 
     def leave(self, event):
         """Objet déplacé, le joueur relâche
            le bouton gauche de la souris"""
-
-        # for i in range(10):
-        #     print(self.joueur1.pions[i].id)
         if self.select_object[0] > 102 and self.select_object[0] < 143:
             self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
-
-
-                    # if pion.id == self.select_object[0]:
-                    #     self.pionToTest = pion
-                    #     print(self.pionToTest)
-            # if self.pionToTest.deplacer(self.x1, self.y1, self.jeu):
-            self.can.coords(self.select_object, self.x1+5, self.y1+5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
-
+            newX = int(self.x1 / self.caseSide)
+            newY = int(self.y1 / self.caseSide) - 1
+            if(self.pionEnCours.deplacer(newX, newY, self.jeu)):
+                self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
+                self.jeu[self.xInitial][self.yInitial] = ''
+                self.jeu[newX][newY] = self.pionEnCours
+            else:
+                x1 = 10 + self.pionEnCours.x * self.caseSide
+                y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
+                self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
 
 class Joueur():
     def __init__(self, id, nom, couleur):
