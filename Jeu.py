@@ -124,5 +124,5 @@ class Joueur():
 
     def perdrePion(self, pion):
         for p in self.pions:
-            if p == self.pions:
+            if p == pion:
                 self.pions.remove(p)
