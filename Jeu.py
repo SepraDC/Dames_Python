@@ -130,30 +130,3 @@ class Joueur():
         for p in self.pions:
             if p == self.pions:
                 self.pions.remove(p)
-
-
-# ------ Programme principal ------
-
-# Création du widget principal ("maître") :
-fen1 = Tk()
-fen1.resizable(0, 0)
-fen1.title("Checkers")
-
-# Création des widgets "esclaves" :
-can1 = Canvas(fen1, bg='dark grey', height=740, width=740)
-can1.pack(side=LEFT)
-
-j1 = Joueur(1, 'Lucas', 'Black')
-j2 = Joueur(2, 'Matthieu', 'white')
-# Creation des dames
-j = Jeu(can1, j1, j2)
-
-bou1 = Button(fen1, text='Damier', command=j.PlateauDeJeu())
-bou1.pack(side=TOP)
-
-bou2 = Button(fen1, text='clear', command=j.clear)
-bou2.pack(side=TOP)
-
-fen1.mainloop()  # démarrage du réceptionnaire d'événement
-fen1.destroy()  # destruction (fermeture) de la fenêtre
-

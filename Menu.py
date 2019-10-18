@@ -1,93 +1,65 @@
 from tkinter import *
+from Jeu import *
+import time
+import os
 
 class Menu:
-    def __init__(self, canevas, width, height, img):
-        self.can = canevas
-        self.width = width
-        self.height = height
-        self.dessinerMenu(img)
+    def __init__(self):
+        pass
 
-    def _initButton(self):
-        #region Buttons
-        buttonPosX = self.height / 2 + 15
-        buttonPosY = self.width / 2 + 10
+def ClearPlay():
+    fenMenu.destroy()
+    startGame()
 
-        imagePlay = PhotoImage(file="assets/Play.png").subsample(5, 5)
-        playB = Button(fenMenu, text="Play", command=self.ClearPlay, image=imagePlay)
-        playB.pack()
+def startGame():
+    # ------ Programme principal ------
 
+    # Création du widget principal ("maître") :
+    fen1 = Tk()
+    fen1.resizable(0, 0)
+    fen1.title("Checkers")
 
-        optionB = Button(fenMenu, text="Options", command=self.ClearOptions)
-        optionB.pack()
-        optionB.place(x=buttonPosX, y=buttonPosY + 50, width=50)
+    # Création des widgets "esclaves" :
 
-        creditsB = Button(fenMenu, text="Credits", command=self.ClearCredits)
-        creditsB.pack()
-        creditsB.place(x=buttonPosX, y=buttonPosY + 100, width=50)
-        #endregion
+    j1 = Joueur(1, 'Lucas', 'Black')
+    j2 = Joueur(2, 'Matthieu', 'white')
+    # Creation des dames
+    can1 = Canvas(fen1, bg='dark grey', height=740, width=740)
+    can1.pack(side=LEFT)
+    j = Jeu(can1, j1, j2)
 
-    def dessinerMenu(self, img):
-        # MAIN MENU
-        self.can.create_image(self.width, self.height, image=img, anchor='se')
-        self._initButton()
-
-    def dessinerSelection(self):
-        # PRESELECT MENU
-        preMenu = Tk()
-        preMenu.title("Checkers - Main menu")
-        preMenu.resizable(0, 0)
-        ws = preMenu.winfo_screenwidth()  # width of the screen
-        hs = preMenu.winfo_screenheight()  # height of the screen
-        x = (ws / 2) - (self.width / 2)
-        y = (hs / 2) - (self.height / 2)
-        preMenu.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
-        canPreMenu = Canvas(preMenu, bg='dark grey', height=self.height, width=self.width)
-        canPreMenu.pack(side=LEFT)
-
-    def dessinerOptions(self):
-        # OPTION MENU
-        optMenu = Tk()
-        optMenu.title("Checkers - Options")
-        optMenu.resizable(0, 0)
-        ws = optMenu.winfo_screenwidth()  # width of the screen
-        hs = optMenu.winfo_screenheight()  # height of the screen
-        x = (ws / 2) - (self.width / 2)
-        y = (hs / 2) - (self.height / 2)
-        optMenu.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
-        canOptMenu = Canvas(optMenu, bg='dark grey', height=self.height, width=self.width)
-        canOptMenu.pack(side=LEFT)
-
-    def dessinerCredits(self):
-        # CREDITS MENU
-        creMenu = Tk()
-        creMenu.title("Checkers - Credits")
-        creMenu.resizable(0, 0)
-        ws = creMenu.winfo_screenwidth()  # width of the screen
-        hs = creMenu.winfo_screenheight()  # height of the screen
-        x = (ws / 2) - (self.width / 2)
-        y = (hs / 2) - (self.height / 2)
-        creMenu.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
-        canCreMenu = Canvas(creMenu, bg='dark grey', height=self.height, width=self.width)
-        canCreMenu.pack(side=LEFT)
-
-    def ClearPlay(self):
-        fenMenu.destroy()
-        self.dessinerSelection()
-
-    def ClearOptions(self):
-        fenMenu.destroy()
-        self.dessinerOptions()
-
-    def ClearCredits(self):
-        fenMenu.destroy()
-        self.dessinerCredits()
+    bou1 = Button(fen1, text='Damier', command=j.PlateauDeJeu())
+    bou1.pack(side=TOP)
+    bou2 = Button(fen1, text='clear', command=j.clear)
+    bou2.pack(side=TOP)
+    fen1.mainloop()  # démarrage du réceptionnaire d'événement
+    fen1.destroy()  # destruction (fermeture) de la fenêtre
 
 h = 740
 w = 740
 
 fenMenu = Tk()
-fenMenu.title("Checkers")
+fenMenu.title("Checkers - Main menu")
 fenMenu.resizable(0, 0) # Désactive le changement de taille de la fenêtre
+
+#Background image
+can = Canvas(fenMenu, width=w, height=h)
+can.pack(side=LEFT)
+img = PhotoImage(file='assets/Checkers.png')
+can.create_image(w, h, image=img, anchor='se')
+
+#region Buttons
+
+buttonPosX = h/2 + 50
+buttonPosY = w/2 + 50
+
+# Impossible d'afficher l'image d'un bouton en objet
+imagePlay = PhotoImage(file="assets/Play.png").subsample(5, 5)
+playB = Button(fenMenu, text="Play", command=ClearPlay, image=imagePlay)
+playB.pack()
+playB.place(x=buttonPosX, y=buttonPosY, anchor="center")
+
+#endregion
 
 #region Window position
 ws = fenMenu.winfo_screenwidth() # width of the screen
@@ -97,11 +69,6 @@ y = (hs/2) - (h/2)
 fenMenu.geometry('%dx%d+%d+%d' % (w, h, x, y))
 #endregion
 
-can = Canvas(fenMenu, bg='dark grey', width=w, height=h)
-can.pack(side=LEFT)
-
-img = PhotoImage(file='assets/Checkers.png')
-monMenu = Menu(can, w, h, img)
-
 fenMenu.mainloop()                 # démarrage du réceptionnaire d'événement
 fenMenu.destroy()                  # destruction (fermeture) de la fenêtre
+
