@@ -16,22 +16,23 @@ class Pion:
         print("Position sélectionnée :", self.x + dpl_x, self.y + dpl_y)
 
         # On vérifie si la case sélectionnée est vide - ok
-        if isinstance(damier[self.x + dpl_x][self.y + dpl_y], Pion) or isinstance(damier[self.x + dpl_x][self.y + dpl_y], Dame) : 
+        if isinstance(damier[self.x + dpl_x][self.y + dpl_y], Pion) or isinstance(damier[self.x + dpl_x][self.y + dpl_y], Dame) :
+            print(damier[self.x + dpl_x][self.y + dpl_y], Pion)
             return False
 
-        print("#1")
+
         # On vérifie si le pion sort du plateau - nok
         if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
-        print("#2")
+
         # On vérifie si le déplacement est diagonale - ok
         if abs(dpl_x) != abs(dpl_y) : return False 
-        print("#3")
+
         # On vérifie si le pion est sur la même case - ok
         if x == self.x : return False
-        print("#4")
+
         # On vérifie si le déplacement est trop grand - ok
         if abs(dpl_x) > self.DIST_MAX : return False
-        print("#5")
+
         coef_x = -1 if dpl_x >= Pion.DIST_MAX else 1
         coef_y = -1 if dpl_y >= Pion.DIST_MAX else 1
 
@@ -43,7 +44,7 @@ class Pion:
             self.x += dpl_x
             self.y += dpl_y
             return True
-        elif abs(dpl_y) > 1 :
+        else :
             return self.terminer_deplacement(dpl_x, dpl_y, coef_x, coef_y, damier)
 
 
@@ -69,13 +70,11 @@ class Pion:
             self.x += dpl_x
             self.y += dpl_y
             return self.manger(pion_adverse)
-        elif isinstance(self, Dame) : 
-            self.x += dpl_x
-            self.y += dpl_y
         else : return False
 
 
     def manger(self, pion) :
+        print(self, pion)
         if self.joueur != pion.joueur :
             self.joueur.ajouterAuCimetiere(pion)
             pion.joueur.perdrePion(pion)
@@ -101,21 +100,23 @@ class Dame(Pion) :
 
     def terminer_deplacement(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         # On vérifie si on passe par dessus un pion, si oui on le mange - ok
-        if abs(dpl_y) <= Pion.DIST_MAX :
-            return super().terminer_deplacement(dpl_x, dpl_y, coef_x, coef_y, damier)
-        else :
-            nbre_pions = 0
-            for i in range(1, abs(dpl_y)) :
-                print(nbre_pions)
-                if isinstance(damier[self.x + dpl_x + (coef_x * i)][self.y + dpl_y + (coef_y * i)], Pion) and nbre_pions < 2:
-                    nbre_pions += 1
-            if nbre_pions == 1 : 
-                print("Position du pion mangé :", self.x + dpl_x + coef_x, self.y + dpl_y + coef_y)
-                pion_adverse = damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y]
-                self.x += dpl_x
-                self.y += dpl_y
-                return self.manger(pion_adverse)
-            else : return False
+        nbre_pions = 0
+        for i in range(1, abs(dpl_y)) :
+            print(nbre_pions)
+            if isinstance(damier[self.x + dpl_x + (coef_x * i)][self.y + dpl_y + (coef_y * i)], Pion) and nbre_pions < 2:
+                nbre_pions += 1
+        if nbre_pions == 1 : 
+            print("Position du pion mangé :", self.x + dpl_x + coef_x, self.y + dpl_y + coef_y)
+            pion_adverse = damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y]
+            self.x += dpl_x
+            self.y += dpl_y
+            return self.manger(pion_adverse)
+        elif nbre_pions == 0 : 
+            self.x += dpl_x
+            self.y += dpl_y
+            return True
+        else : return False
+
 
                 
 
