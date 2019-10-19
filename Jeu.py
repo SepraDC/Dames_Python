@@ -41,7 +41,7 @@ class Jeu:
         self.dessinerPions(self.joueur1)
 
     def _initialisationPion(self):
-        idPions = 103
+        idPions = 105
         for i in range(10):
             for l in range(10):
                 joueur = self.joueur1
@@ -82,7 +82,7 @@ class Jeu:
         self.x1, self.y1 = event.x, event.y
         self.select_object = self.can.find_closest(self.x1, self.y1)
         print(self.select_object)
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
             self.xInitial = int(self.x1 / self.caseSide)
             self.yInitial = int(self.y1 / self.caseSide) - 1
 
@@ -96,24 +96,30 @@ class Jeu:
            le bouton gauche de la souris enfoncé"""
         x2, y2 = event.x, event.y
         dx, dy = x2 - self.x1, y2 - self.y1
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
             self.can.move(self.select_object, dx, dy)
             self.x1, self.y1 = x2, y2
 
     def leave(self, event):
         """Objet déplacé, le joueur relâche
            le bouton gauche de la souris"""
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
-            self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
-            newX = int(self.x1 / self.caseSide)
-            newY = int(self.y1 / self.caseSide) - 1
-            if(self.pionEnCours.deplacer(newX, newY, self.jeu)):
-                self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
-                self.jeu[self.xInitial][self.yInitial] = ''
-                self.jeu[newX][newY] = self.pionEnCours
-                for i in self.joueur1.cimetiere:
-                    print("Cimetiere =",i.id)
-                    self.can.coords((i.id,), 15 + i.x * self.caseSide, 15, 10 + i.x * self.caseSide + self.caseSide, 10+self.caseSide )
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
+            if self.x1 < 10+10*self.caseSide and self.y1 < 10+ 11 * self.caseSide:
+                self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
+                newX = int(self.x1 / self.caseSide)
+                newY = int(self.y1 / self.caseSide) - 1
+                if(self.pionEnCours.deplacer(newX, newY, self.jeu)):
+                    self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
+                    self.jeu[self.xInitial][self.yInitial] = ''
+                    self.jeu[newX][newY] = self.pionEnCours
+                    for i in self.joueur1.cimetiere + self.joueur2.cimetiere:
+                        print("Cimetiere =",i.id)
+                        y = 15 if i.joueur == self.joueur1 else 15 + 11* self.caseSide
+                        self.can.coords((i.id,), 15 + i.x * self.caseSide, y, 10 + i.x * self.caseSide + self.caseSide - 5 , y + self.caseSide - 10)
+                else:
+                    x1 = 10 + self.pionEnCours.x * self.caseSide
+                    y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
+                    self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
             else:
                 x1 = 10 + self.pionEnCours.x * self.caseSide
                 y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
