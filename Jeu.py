@@ -1,5 +1,6 @@
 from tkinter import *
 from Pion import *
+import tkinter.font as tkFont
 
 class Jeu:
     def __init__(self, canevas, joueur1, joueur2):
@@ -20,8 +21,11 @@ class Jeu:
         caseX = 10
         caseY = 10
         self.can.create_rectangle(caseX, caseY, caseX+10* self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
+        font = tkFont.Font(family='Roboto', size=33, weight='bold')
+        self.can.create_text(caseX, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="#777777")
         caseY = 10 + 11* self.caseSide
         self.can.create_rectangle(caseX, caseY, caseX + 10 * self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
+        self.can.create_text(caseX, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
         caseY = 10+self.caseSide
         for i in range(10):
             decalage_couleur = 0 if i % 2 == 0 else 1
@@ -84,6 +88,7 @@ class Jeu:
 
             if isinstance(self.jeu[self.xInitial][self.yInitial], Pion):
                 self.pionEnCours = self.jeu[self.xInitial][self.yInitial]
+                print(self.pionEnCours.id)
             self.can.lift(self.select_object)
 
     def move_object(self, event):
@@ -106,6 +111,9 @@ class Jeu:
                 self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
                 self.jeu[self.xInitial][self.yInitial] = ''
                 self.jeu[newX][newY] = self.pionEnCours
+                for i in self.joueur1.cimetiere:
+                    print("Cimetiere =",i.id)
+                    self.can.coords((i.id,), 15 + i.x * self.caseSide, 15, 10 + i.x * self.caseSide + self.caseSide, 10+self.caseSide )
             else:
                 x1 = 10 + self.pionEnCours.x * self.caseSide
                 y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
