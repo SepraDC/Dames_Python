@@ -51,7 +51,6 @@ class Pion:
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         pion = True
         # On regarde si on passe au dessus d'un pion
-        print(self.x + dpl_x + coef_x, self.y + dpl_y + coef_y)
         if (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) < len(damier[0]) and (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) >= 0:
             pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
 
