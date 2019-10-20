@@ -50,6 +50,8 @@ class Pion:
 
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
 
+        if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
+        if (self.x + dpl_x or self.y + dpl_y) < 0 : return False
         # On regarde si on passe au dessus d'un pion
         pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
 
@@ -84,6 +86,8 @@ class Pion:
 
     # On vérifie si le joueur peut rejouer si oui en renvoi None et le tour ne sera pas passé
     def enchainement(self, damier) :
+        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) > len(damier[0]) - 1 : return False
+        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) < 0 : return False
         if damier[self.x + 1][self.y + 1] or damier[self.x - 1][self.y - 1] :
             if not isinstance(damier[self.x + 2][self.y + 2], (Pion, Dame)) or not isinstance(damier[self.x - 2][self.y - 2], (Pion, Dame)) :
                 print("Enchainement")
@@ -113,6 +117,8 @@ class Dame(Pion) :
 
     # La Dame peut toujours se déplacer en arrière
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
+        if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
+        if (self.x + dpl_x or self.y + dpl_y) < 0 : return False
         return True
 
     def terminer_deplacement(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
@@ -137,8 +143,11 @@ class Dame(Pion) :
     # On vérifie les diagonales, si un enchainement est possible le tour n'est pas passé
     def enchainement(self, damier) :
         for i in range(1, self.DIST_MAX) :
+            if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) > len(damier[0]) - 1 : return False
+            if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) < 0 : return False
             if isinstance(damier[self.x + i][self.y + i], (Pion, Dame)) or isinstance(damier[self.x - i][self.y - i], (Pion, Dame)) : 
                 if not isinstance(damier[self.x + i + 1][self.y + i + 1], (Pion, Dame)) or not isinstance(damier[self.x - i - 1][self.y - i - 1], (Pion, Dame)) :
+                    print("Enchainement")
                     return True
             if isinstance(damier[self.x - i][self.y + i], (Pion, Dame)) or isinstance(damier[self.x + i][self.y - i], (Pion, Dame)) :
                 if not isinstance(damier[self.x - i - 1][self.y + i + 1], (Pion, Dame)) or not isinstance(damier[self.x + i + 1][self.y - i - 1], (Pion, Dame)) :
