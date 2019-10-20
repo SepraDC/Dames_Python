@@ -16,7 +16,7 @@ class Pion:
         print("Position sélectionnée :", self.x + dpl_x, self.y + dpl_y)
 
         # On vérifie si le tour correspond au pion bougé - ok
-        if tour != self.joueur : return False
+        if tour != self.joueur.id : return False
 
         # On vérifie si la case sélectionnée est vide - ok
         if isinstance(damier[self.x + dpl_x][self.y + dpl_y], (Pion, Dame)) : return False

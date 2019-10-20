@@ -64,8 +64,8 @@ class Menu:
         self.fen.title("Checkers")
         self.fen.geometry('%dx%d+%d+%d' % (740, 740, 600, 180)) # Opening position and width
         # Création des widgets "esclaves"
-        j1 = Joueur(1, nomJ1, 'Black')
-        j2 = Joueur(2, nomJ2, 'white')
+        j1 = Joueur(1, nomJ1, 'white')
+        j2 = Joueur(2, nomJ2, 'black')
         # Creation des dames
         can1 = Canvas(self.fen, bg='dark grey', height=740, width=740)
         can1.pack(side=LEFT)
