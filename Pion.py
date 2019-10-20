@@ -51,7 +51,7 @@ class Pion:
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         pion = True
         # On regarde si on passe au dessus d'un pion
-        if (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) < len(damier[0]) and (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) >= 0:
+        if (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) < len(damier) and (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) >= 0:
             pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
 
         if dpl_y == self.DIST_MAX and self.joueur == 1 and not pion :
@@ -85,8 +85,8 @@ class Pion:
 
     # On vérifie si le joueur peut rejouer si oui en renvoi True et le tour ne sera pas passé
     def enchainement(self, damier) :
-        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) > len(damier[0]) - 1 : return False
-        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) < 0 : return False
+        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) > len(damier) - 2 : return False
+        if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) < 1 : return False
 
         pion_environnants = [damier[self.x + 1][self.y + 1], damier[self.x - 1][self.y - 1], damier[self.x - 1][self.y + 1], damier[self.x + 1][self.y - 1]]
         cases_libres = [damier[self.x + 2][self.y + 2], damier[self.x - 2][self.y - 2], damier[self.x - 2][self.y + 2], damier[self.x + 2][self.y - 2]]
@@ -100,16 +100,19 @@ class Pion:
 
     # On transforme le pion courant en dame
     def promotion(self) :
-        return Dame(self.id, self.x, self.y, self.joueur)
+        dame = Dame(self.id, self.x, self.y, self.joueur)
+        self.joueur.perdrePion(self)
+        self.joueur.pions.append(dame)
+        return dame
 
     def hors_plateau(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         case_x = self.x + dpl_x
         case_y = self.y + dpl_y
         if abs(dpl_x) == 1 :
-            if (case_x or case_y) > len(damier[0]) - 1 : return True
+            if (case_x or case_y) > len(damier) - 1 : return True
             if (case_x or case_y) < 0 : return True
         else :
-            if (case_x + coef_x or case_y + coef_y) > len(damier[0]) - 1 : return True
+            if (case_x + coef_x or case_y + coef_y) > len(damier) - 1 : return True
             if (case_x + coef_x or case_y + coef_y) < 0 : return True
         return False
 
@@ -130,19 +133,21 @@ class Dame(Pion) :
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         case_x = self.x + dpl_x
         case_y = self.y + dpl_y
-        if (case_x + coef_x or case_y + coef_y) < len(damier[0]) and (case_x + coef_x or case_y + coef_y) >= 0:
+        if (case_x + coef_x or case_y + coef_y) < len(damier) and (case_x + coef_x or case_y + coef_y) >= 0:
             return True
 
     def terminer_deplacement(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         # On vérifie si on passe par dessus un pion, si oui on le mange - ok
         nbre_pions = 0
+        index = 0
         for i in range(1, abs(dpl_y)) :
             print(nbre_pions)
-            if isinstance(damier[self.x + dpl_x + (coef_x * i)][self.y + dpl_y + (coef_y * i)], (Pion, Dame)) and nbre_pions < 2:
+            if isinstance(damier[self.x + dpl_x + (coef_x * i)][self.y + dpl_y + (coef_y * i)], (Pion, Dame)) and nbre_pions < 1:
                 nbre_pions += 1
+            index = i
         if nbre_pions == 1 : 
             print("Position du pion mangé :", self.x + dpl_x + coef_x, self.y + dpl_y + coef_y)
-            pion_adverse = damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y]
+            pion_adverse = damier[self.x + dpl_x + (coef_x * index)][self.y + dpl_y + (coef_y * index)]
             self.x += dpl_x
             self.y += dpl_y
             return self.manger(pion_adverse, damier)
@@ -155,7 +160,7 @@ class Dame(Pion) :
     # On vérifie les diagonales, si un enchainement est possible le tour n'est pas passé
     def enchainement(self, damier) :
         for i in range(1, self.DIST_MAX) :
-            if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) > len(damier[0]) - 1 : return False
+            if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) > len(damier) - 1 : return False
             if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) < 0 : return False
 
             pion_environnants = [damier[self.x + i][self.y + i], damier[self.x - i][self.y - i], damier[self.x - i][self.y + i], damier[self.x + i][self.y - i]]
