@@ -22,9 +22,6 @@ class Pion:
         # On vérifie si la case sélectionnée est vide - ok
         if isinstance(damier[self.x + dpl_x][self.y + dpl_y], (Pion, Dame)) : return False
 
-        # On vérifie si le pion sort du plateau - ok
-        if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
-
         # On vérifie si le déplacement est diagonale - ok
         if abs(dpl_x) != abs(dpl_y) : return False 
 
@@ -37,6 +34,9 @@ class Pion:
         coef_x = -1 if dpl_x >= Pion.DIST_MAX else 1
         coef_y = -1 if dpl_y >= Pion.DIST_MAX else 1
 
+        # On vérifie si le pion sort du plateau - ok
+        if self.hors_plateau(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
+        print("Passe")
         # On vérifie si le joueur peux aller à l'envers - ok
         if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
@@ -49,11 +49,11 @@ class Pion:
             return self.terminer_deplacement(dpl_x, dpl_y, coef_x, coef_y, damier)
 
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
-
-        if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
-        if (self.x + dpl_x or self.y + dpl_y) < 0 : return False
+        pion = True
         # On regarde si on passe au dessus d'un pion
-        pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
+        print(self.x + dpl_x + coef_x, self.y + dpl_y + coef_y)
+        if (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) < len(damier[0]) and (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) >= 0:
+            pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
 
         if dpl_y == self.DIST_MAX and self.joueur == 1 and not pion :
             return False
@@ -84,7 +84,7 @@ class Pion:
             return True
         return False
 
-    # On vérifie si le joueur peut rejouer si oui en renvoi None et le tour ne sera pas passé
+    # On vérifie si le joueur peut rejouer si oui en renvoi True et le tour ne sera pas passé
     def enchainement(self, damier) :
         if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) > len(damier[0]) - 1 : return False
         if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) < 0 : return False
@@ -102,6 +102,17 @@ class Pion:
     def promotion(self) :
         return Dame(self.id, self.x, self.y, self.joueur)
 
+    def hors_plateau(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
+        case_x = self.x + dpl_x
+        case_y = self.y + dpl_y
+        if abs(dpl_x) == 1 :
+            if (case_x or case_y) > len(damier[0]) - 1 : return True
+            if (case_x or case_y) < 0 : return True
+        else :
+            if (case_x + coef_x or case_y + coef_y) > len(damier[0]) - 1 : return True
+            if (case_x + coef_x or case_y + coef_y) < 0 : return True
+        return False
+
     def __eq__(self, other) :
         if self.x == other.x and self.y == other.y and self.couleur == other.couleur and self.joueur == other.joueur :
             return True
@@ -117,9 +128,10 @@ class Dame(Pion) :
 
     # La Dame peut toujours se déplacer en arrière
     def deplacement_arriere(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
-        if (self.x + dpl_x or self.y + dpl_y) > len(damier[0]) - 1 : return False
-        if (self.x + dpl_x or self.y + dpl_y) < 0 : return False
-        return True
+        case_x = self.x + dpl_x
+        case_y = self.y + dpl_y
+        if (case_x + coef_x or case_y + coef_y) < len(damier[0]) and (case_x + coef_x or case_y + coef_y) >= 0:
+            return True
 
     def terminer_deplacement(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         # On vérifie si on passe par dessus un pion, si oui on le mange - ok
