@@ -36,7 +36,7 @@ class Pion:
 
         # On vérifie si le pion sort du plateau - ok
         if self.hors_plateau(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
-        print("Passe")
+
         # On vérifie si le joueur peux aller à l'envers - ok
         if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
@@ -87,14 +87,15 @@ class Pion:
     def enchainement(self, damier) :
         if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) > len(damier[0]) - 1 : return False
         if (self.x + 2 or self.y + 2 or self.x - 2 or self.y - 2) < 0 : return False
-        if damier[self.x + 1][self.y + 1] or damier[self.x - 1][self.y - 1] :
-            if not isinstance(damier[self.x + 2][self.y + 2], (Pion, Dame)) or not isinstance(damier[self.x - 2][self.y - 2], (Pion, Dame)) :
-                print("Enchainement")
-                return True
-        if damier[self.x - 1][self.y + 1] or damier[self.x + 1][self.y - 1] :
-            if not isinstance(damier[self.x - 2][self.y + 2], (Pion, Dame)) or not isinstance(damier[self.x + 2][self.y - 2], (Pion, Dame)) :
-                print("Enchainement")
-                return True
+
+        pion_environnants = [damier[self.x + 1][self.y + 1], damier[self.x - 1][self.y - 1], damier[self.x - 1][self.y + 1], damier[self.x + 1][self.y - 1]]
+        cases_libres = [damier[self.x + 2][self.y + 2], damier[self.x - 2][self.y - 2], damier[self.x - 2][self.y + 2], damier[self.x + 2][self.y - 2]]
+
+        for i in range(len(pion_environnants)) :
+            if isinstance(pion_environnants[i], (Dame, Pion)) and not isinstance(cases_libres[i], (Dame, Pion)) :
+                if pion_environnants[i].joueur.id != self.joueur.id :
+                    return True
+
         return False
 
     # On transforme le pion courant en dame
@@ -156,14 +157,14 @@ class Dame(Pion) :
         for i in range(1, self.DIST_MAX) :
             if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) > len(damier[0]) - 1 : return False
             if (self.x + i + 1 or self.y + i + 1 or self.x - i - 1 or self.y - i - 1) < 0 : return False
-            if isinstance(damier[self.x + i][self.y + i], (Pion, Dame)) or isinstance(damier[self.x - i][self.y - i], (Pion, Dame)) : 
-                if not isinstance(damier[self.x + i + 1][self.y + i + 1], (Pion, Dame)) or not isinstance(damier[self.x - i - 1][self.y - i - 1], (Pion, Dame)) :
-                    print("Enchainement")
-                    return True
-            if isinstance(damier[self.x - i][self.y + i], (Pion, Dame)) or isinstance(damier[self.x + i][self.y - i], (Pion, Dame)) :
-                if not isinstance(damier[self.x - i - 1][self.y + i + 1], (Pion, Dame)) or not isinstance(damier[self.x + i + 1][self.y - i - 1], (Pion, Dame)) :
-                    print("Enchainement")
-                    return True
+
+            pion_environnants = [damier[self.x + i][self.y + i], damier[self.x - i][self.y - i], damier[self.x - i][self.y + i], damier[self.x + i][self.y - i]]
+            cases_libres = [damier[self.x + i + 1][self.y + i + 1], damier[self.x - i][self.y - i - 1], damier[self.x - i][self.y + i + 1], damier[self.x + i + 1][self.y - i - 1]]
+        
+            for i in range(len(pion_environnants)) :
+                if isinstance(pion_environnants[i], (Dame, Pion)) and not isinstance(cases_libres[i], (Dame, Pion)) :
+                    if pion_environnants[i].joueur.id != self.joueur.id :
+                        return True
         return False
 
         
