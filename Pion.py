@@ -38,7 +38,8 @@ class Pion:
         if self.hors_plateau(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
         # On vérifie si le joueur peux aller à l'envers - ok
-        if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
+        if (self.joueur.id == 1 and coef_y > 0) or (self.joueur.id == 2 and coef_y < 0) :
+            if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
         # On bouge le pion - ok
         if abs(dpl_y) == 1 :
