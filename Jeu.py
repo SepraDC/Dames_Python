@@ -32,7 +32,7 @@ class Jeu:
         for i in range(10):
             decalage_couleur = 0 if i % 2 == 0 else 1
             for l in range(10):
-                couleur = "#FFF" if l % 2 == decalage_couleur else "#8D2BB1"
+                couleur = "#FFF" if l % 2 == decalage_couleur else "#3f1d13"
                 self.can.create_rectangle(caseX, caseY, caseX + self.caseSide, caseY + self.caseSide, fill=couleur, outline="")
                 caseX += self.caseSide
             caseY += self.caseSide

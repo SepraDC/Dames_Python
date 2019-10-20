@@ -40,11 +40,11 @@ class Menu:
 
         self.nomJoueur1 = StringVar()
         self.nomJoueur2 = StringVar()
-        entryJoueur1 = self.makeentry(self.fen, "Nom du joueur 1 :", text='test1',textvariable=self.nomJoueur1)
+        entryJoueur1 = self.makeentry(self.fen, "Nom du joueur 1 :", text='test1', textvariable=self.nomJoueur1)
         entryJoueur2 = self.makeentry(self.fen, "Nom du joueur 2 :", text='test', textvariable=self.nomJoueur2)
         start = Button(self.fen, text="Next", command=self.ClearPlay)
         start.pack()
-        start.place(x=self.buttonPosX, y=self.buttonPosY, anchor="center")
+        # start.place(x=self.buttonPosX, y=self.buttonPosY, anchor="center")
 
     def makeentry(self, parent, texte, **options):
         Label(self.fen, text=texte).pack()
