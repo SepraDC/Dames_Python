@@ -1,4 +1,3 @@
-from tkinter import *
 from Pion import *
 import tkinter.font as tkFont
 
@@ -18,19 +17,22 @@ class Jeu:
             self.jeu.append([''] * 10)
 
     def PlateauDeJeu(self):
-        caseX = 10
-        caseY = 10
+        caseX, caseY = 10, 10
+        # Cimetiere J2 qui contient les pions J1
         self.can.create_rectangle(caseX, caseY, caseX+10* self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
         font = tkFont.Font(family='Roboto', size=33, weight='bold')
-        self.can.create_text(caseX, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="#777777")
+        self.can.create_text(caseX+5, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
+
+        # Cimetiere J1 qui contient les pions J2
         caseY = 10 + 11* self.caseSide
         self.can.create_rectangle(caseX, caseY, caseX + 10 * self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
-        self.can.create_text(caseX, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
+        self.can.create_text(caseX+5, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="#777777")
         caseY = 10+self.caseSide
+        # Dessin des cases du damiers en intercalant les couleurs
         for i in range(10):
             decalage_couleur = 0 if i % 2 == 0 else 1
             for l in range(10):
-                couleur = "#e5a55d" if l % 2 == decalage_couleur else "#3f1d13"
+                couleur = "#FFF" if l % 2 == decalage_couleur else "#8D2BB1"
                 self.can.create_rectangle(caseX, caseY, caseX + self.caseSide, caseY + self.caseSide, fill=couleur, outline="")
                 caseX += self.caseSide
             caseY += self.caseSide
@@ -108,16 +110,16 @@ class Jeu:
                 self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
                 newX = int(self.x1 / self.caseSide)
                 newY = int(self.y1 / self.caseSide) - 1
-                if(self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) or self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) == None):
+                if(self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour)):
                     self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
                     self.jeu[self.xInitial][self.yInitial] = ''
                     self.jeu[newX][newY] = self.pionEnCours
                     for i in self.joueur1.cimetiere + self.joueur2.cimetiere:
-                        print("Cimetiere =",i.id)
                         y = 15 if i.joueur == self.joueur1 else 15 + 11* self.caseSide
                         self.can.coords((i.id,), 15 + i.x * self.caseSide, y, 10 + i.x * self.caseSide + self.caseSide - 5 , y + self.caseSide - 10)
-                    # if self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) != None :
                     self.tour = 1 if self.tour == 2 else 2
+                    self._enleverPionMortDuJeu(self.joueur1)
+                    self._enleverPionMortDuJeu(self.joueur2)
                 else:
                     x1 = 10 + self.pionEnCours.x * self.caseSide
                     y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
@@ -126,6 +128,14 @@ class Jeu:
                 x1 = 10 + self.pionEnCours.x * self.caseSide
                 y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
                 self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
+    def _enleverPionMortDuJeu(self, joueur):
+        for pionMort in joueur.cimetiere:
+            for ligne in range(10):
+                for pion in self.jeu[ligne]:
+                    if isinstance(pion, Pion):
+                        if pion.id == pionMort.id:
+
+
 
 class Joueur():
     def __init__(self, id, nom, couleur):
