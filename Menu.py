@@ -3,12 +3,13 @@ from Jeu import *
 import webbrowser
 
 class Menu:
-    def __init__(self,fenetre, canvas, imgBg, imgPlay, imgRules):
+    def __init__(self,fenetre, canvas, imgBg, imgPlay, imgRules, imgNext):
         self.fen = fenetre
         self.can = canvas
         self.imgBg = imgBg
         self.imgPlay = imgPlay
         self.imgRules = imgRules
+        self.imgNext = imgNext
 
         can.create_image(w, h, image=self.imgBg, anchor='se')
         self.init_buttons()
@@ -42,9 +43,8 @@ class Menu:
         self.nomJoueur2 = StringVar()
         entryJoueur1 = self.makeentry(self.fen, "Nom du joueur 1 :", text='test1', textvariable=self.nomJoueur1)
         entryJoueur2 = self.makeentry(self.fen, "Nom du joueur 2 :", text='test', textvariable=self.nomJoueur2)
-        start = Button(self.fen, text="Next", command=self.ClearPlay)
+        start = Button(self.fen, command=self.ClearPlay, image=self.imgNext, borderwidth=0)
         start.pack()
-        # start.place(x=self.buttonPosX, y=self.buttonPosY, anchor="center")
 
     def makeentry(self, parent, texte, **options):
         Label(self.fen, text=texte).pack()
@@ -107,8 +107,9 @@ can.place(in_=fenMenu, x=0)
 imageBg = PhotoImage(file='assets/Checkers.png')
 imagePlay = PhotoImage(file="assets/Play.png").subsample(5, 5)
 imageRules = PhotoImage(file="assets/Rules.png").subsample(5, 5)
+imageNext = PhotoImage(file="assets/Next.png").subsample(7, 7)
 
-monMenu = Menu(fenMenu, can, imageBg, imagePlay, imageRules)
+monMenu = Menu(fenMenu, can, imageBg, imagePlay, imageRules, imageNext)
 #endregion
 
 fenMenu.mainloop()                 # démarrage du réceptionnaire d'événement

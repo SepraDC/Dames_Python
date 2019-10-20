@@ -112,9 +112,14 @@ class Jeu:
                 self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
                 newX = int(self.x1 / self.caseSide)
                 newY = int(self.y1 / self.caseSide) - 1
-
                 resultatDeplacement = self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour)
+                # Si le pion peut etre déplacé alors on recentre le pion puis on modifie la position dans le tableau self.jeu
                 if resultatDeplacement == True or resultatDeplacement == None:
+                    if (self.pionEnCours.joueur.id == 1 and newY == 0) or (self.pionEnCours.joueur.id == 2 and newY == 9):
+                        self.pionEnCours = self.pionEnCours.promotion()
+                        self.can.itemconfigure((self.pionEnCours.id,), outline='red', width='5')
+
+
                     self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
                     self.jeu[self.xInitial][self.yInitial] = ''
                     self.jeu[newX][newY] = self.pionEnCours
@@ -136,14 +141,14 @@ class Jeu:
                     x1 = 10 + self.pionEnCours.x * self.caseSide
                     y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
                     self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
-                    del self.x1
-                    del self.y1
+                    del self.x1, self.y1, newX, newY
             else:
                 x1 = 10 + self.pionEnCours.x * self.caseSide
                 y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
                 self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
 
-            if len(self.joueur1.pions) == 0 or len(self.joueur2.pions)==0:
+            #test de victoire
+            if len(self.joueur1.pions) == 0 or len(self.joueur2.pions) == 0:
                 font = tkFont.Font(family='Roboto', size=65, weight='bold')
                 self.can.create_text(120, 120, text=self.joueur2.nom, anchor='w', font= font, fill= "#777777")
 

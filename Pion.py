@@ -38,9 +38,9 @@ class Pion:
         if self.hors_plateau(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
         # On vérifie si le joueur peux aller à l'envers - ok
-        if (self.joueur.id == 1 and coef_y > 0) or (self.joueur.id == 2 and coef_y < 0) :
-            if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
+        if not self.deplacement_arriere(dpl_x, dpl_y, coef_x, coef_y, damier) : return False
 
+        if self.y + dpl_y > 9: return False
         # On bouge le pion - ok
         if abs(dpl_y) == 1 :
             self.x += dpl_x
@@ -53,7 +53,7 @@ class Pion:
         pion = True
         # On regarde si on passe au dessus d'un pion
         if (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) < len(damier) and (self.x + dpl_x + coef_x or self.y + dpl_y + coef_y) >= 0:
-            pion = isinstance(damier[self.x + dpl_x + coef_x][self.y + dpl_y + coef_y], (Pion, Dame))
+            pion = isinstance(damier[self.x][self.y], (Pion, Dame))
 
         if dpl_y == self.DIST_MAX and self.joueur == 1 and not pion :
             return False
@@ -96,7 +96,6 @@ class Pion:
             if isinstance(pion_environnants[i], (Dame, Pion)) and not isinstance(cases_libres[i], (Dame, Pion)) :
                 if pion_environnants[i].joueur.id != self.joueur.id :
                     return True
-
         return False
 
     # On transforme le pion courant en dame
@@ -109,6 +108,7 @@ class Pion:
     def hors_plateau(self, dpl_x, dpl_y, coef_x, coef_y, damier) :
         case_x = self.x + dpl_x
         case_y = self.y + dpl_y
+
         if abs(dpl_x) == 1 :
             if (case_x or case_y) > len(damier) - 1 : return True
             if (case_x or case_y) < 0 : return True
