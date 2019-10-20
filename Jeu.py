@@ -1,6 +1,5 @@
-from tkinter import *
 from Pion import *
-
+import tkinter.font as tkFont
 
 class Jeu:
     def __init__(self, canevas, joueur1, joueur2):
@@ -18,17 +17,23 @@ class Jeu:
             self.jeu.append([''] * 10)
 
     def PlateauDeJeu(self):
-        caseX = 10
-        caseY = 10
+        caseX, caseY = 10, 10
+        # Cimetiere J2 qui contient les pions J1
         self.can.create_rectangle(caseX, caseY, caseX+10* self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
+        font = tkFont.Font(family='Roboto', size=33, weight='bold')
+        self.can.create_text(caseX+5, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
+
+        # Cimetiere J1 qui contient les pions J2
         caseY = 10 + 11* self.caseSide
         self.can.create_rectangle(caseX, caseY, caseX + 10 * self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
+        self.can.create_text(caseX+5, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="#777777")
         caseY = 10+self.caseSide
+        # Dessin des cases du damiers en intercalant les couleurs
         for i in range(10):
             decalage_couleur = 0 if i % 2 == 0 else 1
             for l in range(10):
-                couleur = "white" if l % 2 == decalage_couleur else "black"
-                self.can.create_rectangle(caseX, caseY, caseX + self.caseSide, caseY + self.caseSide, fill=couleur)
+                couleur = "#FFF" if l % 2 == decalage_couleur else "#3f1d13"
+                self.can.create_rectangle(caseX, caseY, caseX + self.caseSide, caseY + self.caseSide, fill=couleur, outline="")
                 caseX += self.caseSide
             caseY += self.caseSide
             caseX = 10
@@ -38,7 +43,7 @@ class Jeu:
         self.dessinerPions(self.joueur1)
 
     def _initialisationPion(self):
-        idPions = 103
+        idPions = 105
         for i in range(10):
             for l in range(10):
                 joueur = self.joueur1
@@ -49,27 +54,22 @@ class Jeu:
                 if i < 4 or i >= 6:
                     if i % 2 == 0:
                         if l % 2 != 0:
-                            pion = Pion(l, i, joueur)
+                            pion = Pion(idPions, l, i, joueur)
                             joueur.pions.append(pion)
-                            self.jeu[l][i] = Pion
+                            self.jeu[l][i] = pion
+                            idPions += 1
                     else:
                         if l % 2 == 0:
-                            pion = Pion(l, i, joueur)
+                            pion = Pion(idPions, l, i, joueur)
                             joueur.pions.append(pion)
-                            self.jeu[l][i] = Pion
-                    idPions += 1
+                            self.jeu[l][i] = pion
+                            idPions += 1
 
     def dessinerPions(self, joueur):
         for pion in joueur.pions:
             x = 10 + pion.x * self.caseSide
             y = 10+ self.caseSide + pion.y * self.caseSide
             self.can.create_oval(x + 5, y+5, x + self.caseSide- 5, y + self.caseSide- 5, fill=pion.joueur.couleur)
-
-    def _changerCouleurCase(self, couleurActuelle):
-        if couleurActuelle == 'white':
-            return 'black'
-        else:
-            return 'white'
 
     def clear(self):
         "Nettoyage du canvas +réinitialisation des variables"
@@ -82,10 +82,15 @@ class Jeu:
     def catch_object(self, event):
         "clic gauche sur l'objet à déplacer"
         self.x1, self.y1 = event.x, event.y
-        print("oi")
         self.select_object = self.can.find_closest(self.x1, self.y1)
         print(self.select_object)
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
+            self.xInitial = int(self.x1 / self.caseSide)
+            self.yInitial = int(self.y1 / self.caseSide) - 1
+
+            if isinstance(self.jeu[self.xInitial][self.yInitial], Pion):
+                self.pionEnCours = self.jeu[self.xInitial][self.yInitial]
+                print(self.pionEnCours.id)
             self.can.lift(self.select_object)
 
     def move_object(self, event):
@@ -93,17 +98,43 @@ class Jeu:
            le bouton gauche de la souris enfoncé"""
         x2, y2 = event.x, event.y
         dx, dy = x2 - self.x1, y2 - self.y1
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
             self.can.move(self.select_object, dx, dy)
             self.x1, self.y1 = x2, y2
 
     def leave(self, event):
         """Objet déplacé, le joueur relâche
            le bouton gauche de la souris"""
-        if self.select_object[0] > 102 and self.select_object[0] < 143:
-            self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
-            print(self.x1, self.y1)
-            self.can.coords(self.select_object, self.x1+5, self.y1+5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
+        if self.select_object[0] > 104 and self.select_object[0] < 145:
+            if self.x1 < 10+10*self.caseSide and self.y1 < 10+ 11 * self.caseSide:
+                self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
+                newX = int(self.x1 / self.caseSide)
+                newY = int(self.y1 / self.caseSide) - 1
+                if(self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour)):
+                    self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
+                    self.jeu[self.xInitial][self.yInitial] = ''
+                    self.jeu[newX][newY] = self.pionEnCours
+                    for i in self.joueur1.cimetiere + self.joueur2.cimetiere:
+                        y = 15 if i.joueur == self.joueur1 else 15 + 11* self.caseSide
+                        self.can.coords((i.id,), 15 + i.x * self.caseSide, y, 10 + i.x * self.caseSide + self.caseSide - 5 , y + self.caseSide - 10)
+                    self.tour = 1 if self.tour == 2 else 2
+                    self._enleverPionMortDuJeu(self.joueur1)
+                    self._enleverPionMortDuJeu(self.joueur2)
+                else:
+                    x1 = 10 + self.pionEnCours.x * self.caseSide
+                    y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
+                    self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
+            else:
+                x1 = 10 + self.pionEnCours.x * self.caseSide
+                y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
+                self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
+    def _enleverPionMortDuJeu(self, joueur):
+        for pionMort in joueur.cimetiere:
+            for ligne in range(10):
+                for pion in self.jeu[ligne]:
+                    if isinstance(pion, Pion):
+                        if pion.id == pionMort.id:
+                            pass
 
 
 class Joueur():
@@ -119,31 +150,5 @@ class Joueur():
 
     def perdrePion(self, pion):
         for p in self.pions:
-            if p == self.pions:
+            if p == pion:
                 self.pions.remove(p)
-
-
-# ------ Programme principal ------
-
-# Création du widget principal ("maître") :
-fen1 = Tk()
-fen1.resizable(0, 0)
-fen1.title("Checkers")
-
-# Création des widgets "esclaves" :
-can1 = Canvas(fen1, bg='dark grey', height=740, width=740)
-can1.pack(side=LEFT)
-
-j1 = Joueur(1, 'Lucas', 'blue')
-j2 = Joueur(2, 'Matthieu', 'red')
-# Creation des dames
-j = Jeu(can1, j1, j2)
-
-bou1 = Button(fen1, text='Damier', command=j.PlateauDeJeu())
-bou1.pack(side=TOP)
-
-bou2 = Button(fen1, text='clear', command=j.clear)
-bou2.pack(side=TOP)
-
-fen1.mainloop()  # démarrage du réceptionnaire d'événement
-fen1.destroy()  # destruction (fermeture) de la fenêtre
