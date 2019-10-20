@@ -108,7 +108,7 @@ class Jeu:
                 self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
                 newX = int(self.x1 / self.caseSide)
                 newY = int(self.y1 / self.caseSide) - 1
-                if(self.pionEnCours.deplacer(newX, newY, self.jeu)):
+                if(self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) or self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) == None):
                     self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
                     self.jeu[self.xInitial][self.yInitial] = ''
                     self.jeu[newX][newY] = self.pionEnCours
@@ -116,6 +116,8 @@ class Jeu:
                         print("Cimetiere =",i.id)
                         y = 15 if i.joueur == self.joueur1 else 15 + 11* self.caseSide
                         self.can.coords((i.id,), 15 + i.x * self.caseSide, y, 10 + i.x * self.caseSide + self.caseSide - 5 , y + self.caseSide - 10)
+                    # if self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour) != None :
+                    self.tour = 1 if self.tour == 2 else 2
                 else:
                     x1 = 10 + self.pionEnCours.x * self.caseSide
                     y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
