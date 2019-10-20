@@ -21,18 +21,18 @@ class Jeu:
         # Cimetiere J2 qui contient les pions J1
         self.can.create_rectangle(caseX, caseY, caseX+10* self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
         font = tkFont.Font(family='Roboto', size=33, weight='bold')
-        self.can.create_text(caseX+5, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
+        self.nomJ2 = self.can.create_text(caseX+5, caseY, text=self.joueur2.nom, anchor="nw", font=font, fill="#777777")
 
         # Cimetiere J1 qui contient les pions J2
         caseY = 10 + 11* self.caseSide
         self.can.create_rectangle(caseX, caseY, caseX + 10 * self.caseSide, caseY + self.caseSide, fill="#f4e7d3")
-        self.can.create_text(caseX+5, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="#777777")
+        self.nomJ1 = self.can.create_text(caseX+5, caseY, text=self.joueur1.nom, anchor="nw", font=font, fill="purple")
         caseY = 10+self.caseSide
         # Dessin des cases du damiers en intercalant les couleurs
         for i in range(10):
             decalage_couleur = 0 if i % 2 == 0 else 1
             for l in range(10):
-                couleur = "#FFF" if l % 2 == decalage_couleur else "#3f1d13"
+                couleur = "#FFF" if l % 2 == decalage_couleur else "#888"
                 self.can.create_rectangle(caseX, caseY, caseX + self.caseSide, caseY + self.caseSide, fill=couleur, outline="")
                 caseX += self.caseSide
             caseY += self.caseSide
@@ -43,7 +43,9 @@ class Jeu:
         self.dessinerPions(self.joueur1)
 
     def _initialisationPion(self):
+        #id pion permettant d'avoir la même identification entre l'enfant "oval" du canvas et le pion correspondant
         idPions = 105
+        #création des pions et ajout dans les tableaux respectifs des joueurs
         for i in range(10):
             for l in range(10):
                 joueur = self.joueur1
@@ -69,7 +71,7 @@ class Jeu:
         for pion in joueur.pions:
             x = 10 + pion.x * self.caseSide
             y = 10+ self.caseSide + pion.y * self.caseSide
-            self.can.create_oval(x + 5, y+5, x + self.caseSide- 5, y + self.caseSide- 5, fill=pion.joueur.couleur)
+            self.can.create_oval(x + 5, y+5, x + self.caseSide- 5, y + self.caseSide- 5, fill=pion.joueur.couleur, outline='purple')
 
     def clear(self):
         "Nettoyage du canvas +réinitialisation des variables"
@@ -110,35 +112,48 @@ class Jeu:
                 self.x1, self.y1 = 10 + int(self.x1/self.caseSide) *self.caseSide, 10 + int(self.y1/self.caseSide) *self.caseSide
                 newX = int(self.x1 / self.caseSide)
                 newY = int(self.y1 / self.caseSide) - 1
-                if(self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour)):
+
+                resultatDeplacement = self.pionEnCours.deplacer(newX, newY, self.jeu, self.tour)
+                if resultatDeplacement == True or resultatDeplacement == None:
                     self.can.coords(self.select_object, self.x1 + 5, self.y1 + 5, self.x1 + self.caseSide - 5, self.y1 + self.caseSide - 5)
                     self.jeu[self.xInitial][self.yInitial] = ''
                     self.jeu[newX][newY] = self.pionEnCours
                     for i in self.joueur1.cimetiere + self.joueur2.cimetiere:
                         y = 15 if i.joueur == self.joueur1 else 15 + 11* self.caseSide
                         self.can.coords((i.id,), 15 + i.x * self.caseSide, y, 10 + i.x * self.caseSide + self.caseSide - 5 , y + self.caseSide - 10)
-                    self.tour = 1 if self.tour == 2 else 2
+                    if resultatDeplacement:
+                        self.tour = 1 if self.tour == 2 else 2
+                        if self.tour == 1:
+                            self.can.itemconfigure(self.nomJ1, fill="purple")
+                            self.can.itemconfigure(self.nomJ2, fill="gray")
+                        elif self.tour == 2:
+                            self.can.itemconfigure(self.nomJ2, fill="purple")
+                            self.can.itemconfigure(self.nomJ1, fill="gray")
+
                     self._enleverPionMortDuJeu(self.joueur1)
                     self._enleverPionMortDuJeu(self.joueur2)
                 else:
                     x1 = 10 + self.pionEnCours.x * self.caseSide
                     y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
                     self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
+                    del self.x1
+                    del self.y1
             else:
                 x1 = 10 + self.pionEnCours.x * self.caseSide
                 y1 = 10 + self.caseSide + self.pionEnCours.y * self.caseSide
                 self.can.coords(self.select_object, x1 + 5, y1 + 5, x1 + self.caseSide - 5, y1 + self.caseSide - 5)
+
+            if len(self.joueur1.pions) == 0 or len(self.joueur2.pions)==0:
+                font = tkFont.Font(family='Roboto', size=65, weight='bold')
+                self.can.create_text(120, 120, text=self.joueur2.nom, anchor='w', font= font, fill= "#777777")
+
     def _enleverPionMortDuJeu(self, joueur):
         for pionMort in joueur.cimetiere:
-            for ligne in range(10):
-                for pion in self.jeu[ligne]:
-                    if isinstance(pion, Pion):
-                        if pion.id == pionMort.id:
-                            pass
-
+            if isinstance(self.jeu[pionMort.x][pionMort.y], Pion) and self.jeu[pionMort.x][pionMort.y].id == pionMort.id:
+                self.jeu[pionMort.x][pionMort.y] = ''
 
 class Joueur():
-    def __init__(self, id, nom, couleur):
+    def __init__(self, id, couleur, nom = 'Joueur', ):
         self.id = id
         self.nom = nom
         self.couleur = couleur
