@@ -134,7 +134,7 @@ class Jeu:
                 for pion in self.jeu[ligne]:
                     if isinstance(pion, Pion):
                         if pion.id == pionMort.id:
-
+                            pass
 
 
 class Joueur():
